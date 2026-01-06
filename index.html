@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pharma Registration</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      background: linear-gradient(120deg, #e3f2fd, #f1f8e9);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .card {
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+
+    .form-control, .form-select {
+      border-radius: 8px;
+      padding: 10px;
+    }
+
+    .btn-custom {
+      background: #28a745;
+      border: none;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-custom:hover {
+      background: #218838;
+    }
+
+    .title {
+      font-weight: 700;
+      color: #2e7d32;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-7 col-lg-6">
+      <div class="card p-4">
+        <h3 class="text-center mb-4 title">Pharma Registration Form</h3>
+
+        <form id="pharmaForm">
+
+          <div class="mb-3">
+            <input type="text" class="form-control" name="companyName" placeholder="Company Name" required>
+          </div>
+
+          <div class="mb-3">
+            <input type="text" class="form-control" name="licenseNumber" placeholder="Drug License Number" required>
+          </div>
+
+          <div class="mb-3">
+            <input type="email" class="form-control" name="email" placeholder="Email Address" required>
+          </div>
+
+          <div class="mb-3">
+            <input type="tel" class="form-control" name="phone" placeholder="Phone Number" required>
+          </div>
+
+          <div class="mb-3">
+            <select class="form-select" name="category" required>
+              <option value="">Select Category</option>
+              <option>Manufacturer</option>
+              <option>Distributor</option>
+              <option>Wholesaler</option>
+              <option>Retailer</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <textarea class="form-control" name="address" rows="3" placeholder="Company Address" required></textarea>
+          </div>
+
+          <div class="d-grid">
+            <button type="submit" class="btn btn-custom btn-lg text-white">
+              Submit Registration
+            </button>
+          </div>
+
+        </form>
+
+        <p id="msg" class="text-center mt-3 fw-semibold"></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+const form = document.getElementById("pharmaForm");
+const msg = document.getElementById("msg");
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  msg.textContent = "Submitting...";
+  msg.className = "text-center mt-3 text-primary fw-semibold";
+
+  const formData = {
+    companyName: form.companyName.value,
+    licenseNumber: form.licenseNumber.value,
+    email: form.email.value,
+    phone: form.phone.value,
+    category: form.category.value,
+    address: form.address.value,
+  };
+
+  try {
+    const res = await fetch("https://pharma-backend-mqia.onrender.com/api/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData)
+    });
+
+    const data = await res.json();
+
+    if(res.ok){
+      msg.textContent = data.message || "Registration Successful ✅";
+      msg.className = "text-center mt-3 text-success fw-semibold";
+      form.reset();
+    } else {
+      msg.textContent = data.message || "Something went wrong ❌";
+      msg.className = "text-center mt-3 text-danger fw-semibold";
+    }
+
+  } catch (error) {
+    console.log(error);
+    msg.textContent = "Server not responding ❌";
+    msg.className = "text-center mt-3 text-danger fw-semibold";
+  }
+});
+</script>
+
+</body>
+</html>
