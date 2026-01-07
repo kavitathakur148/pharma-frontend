@@ -24,7 +24,7 @@
       box-shadow: 0 10px 30px rgba(0,0,0,0.15);
     }
 
-    .form-control, .form-select {
+    .form-control {
       border-radius: 8px;
       padding: 10px;
     }
@@ -54,38 +54,60 @@
       <div class="card p-4">
         <h3 class="text-center mb-4 title">Pharma Registration Form</h3>
 
-        <form id="pharmaForm">
+        <form id="pharmaForm" enctype="multipart/form-data">
 
+          <!-- Name -->
+          <div class="mb-3">
+            <input type="text" class="form-control" name="name" placeholder="Your Name" required>
+          </div>
+
+          <!-- Company Name -->
           <div class="mb-3">
             <input type="text" class="form-control" name="companyName" placeholder="Company Name" required>
           </div>
 
-          <div class="mb-3">
-            <input type="text" class="form-control" name="licenseNumber" placeholder="Drug License Number" required>
-          </div>
-
+          <!-- Email -->
           <div class="mb-3">
             <input type="email" class="form-control" name="email" placeholder="Email Address" required>
           </div>
 
+          <!-- Message -->
           <div class="mb-3">
-            <input type="tel" class="form-control" name="phone" placeholder="Phone Number" required>
+            <textarea class="form-control" name="message" rows="3" placeholder="Your Message" required></textarea>
           </div>
 
+          <!-- Category (Multiple Bullet Options) -->
           <div class="mb-3">
-            <select class="form-select" name="category" required>
-              <option value="">Select Category</option>
-              <option>Manufacturer</option>
-              <option>Distributor</option>
-              <option>Wholesaler</option>
-              <option>Retailer</option>
-            </select>
+            <label class="fw-semibold mb-2">Select Category (Multiple allowed)</label>
+
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="category[]" value="Manufacturer">
+              <label class="form-check-label">Manufacturer</label>
+            </div>
+
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="category[]" value="Distributor">
+              <label class="form-check-label">Distributor</label>
+            </div>
+
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="category[]" value="Wholesaler">
+              <label class="form-check-label">Wholesaler</label>
+            </div>
+
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="category[]" value="Retailer">
+              <label class="form-check-label">Retailer</label>
+            </div>
           </div>
 
+          <!-- File Upload -->
           <div class="mb-3">
-            <textarea class="form-control" name="address" rows="3" placeholder="Company Address" required></textarea>
+            <label class="fw-semibold mb-1">Upload Document</label>
+            <input type="file" class="form-control" name="document" required>
           </div>
 
+          <!-- Submit -->
           <div class="d-grid">
             <button type="submit" class="btn btn-custom btn-lg text-white">
               Submit Registration
@@ -100,32 +122,22 @@
   </div>
 </div>
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
 <script>
 const form = document.getElementById("pharmaForm");
 const msg = document.getElementById("msg");
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
+
   msg.textContent = "Submitting...";
   msg.className = "text-center mt-3 text-primary fw-semibold";
 
-  const formData = {
-    companyName: form.companyName.value,
-    licenseNumber: form.licenseNumber.value,
-    email: form.email.value,
-    phone: form.phone.value,
-    category: form.category.value,
-    address: form.address.value,
-  };
+  const formData = new FormData(form);
 
   try {
     const res = await fetch("https://pharma-backend-mqia.onrender.com/api/register", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData)
+      body: formData
     });
 
     const data = await res.json();
